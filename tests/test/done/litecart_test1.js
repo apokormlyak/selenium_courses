@@ -23,7 +23,7 @@ const chrome = require('selenium-webdriver/chrome');
             await driver.get('http://localhost/litecart/admin/');
             await driver.findElement(By.name('username')).sendKeys('admin', Key.RETURN);
             await driver.findElement(By.name('password')).sendKeys('admin', Key.RETURN);
-            //await driver.findElement(By.css("button[type='submit']")).click();
+            await driver.findElement(By.css("button[type='submit']")).click();
         });
 
         after (() => driver && driver.quit())
