@@ -25,10 +25,23 @@ describe('test7', function(){
         driver.wait(until.elementLocated(By.css("div#box-apps-menu-wrapper")), 20000);
         //await driver.manage().timeouts().pageLoadTimeout(20000, timeUnit.Seconds);
 
-        let rows = driver.findElements(By.css("div#box-apps-menu-wrapper li#app-"));
+        let rows = driver.findElements(By.css("ul#box-apps-menu li#app-"));
 
         for (row in rows){
-            await row.findElement(By.id('#app-'), 10000).click();
+
+            let element = row.findElement(By.id('#app-'));
+            element.click();
+
+            driver.manage().timeouts().implicityWait(20000);
+                let elmsChld = element.findElements(By.css('ul.docs'));
+
+            if(elmsChld.length>0){
+                for (elmChld in elmsChld){
+                    elmChld.findElements(By.css('ul.docs')).click();
+                };
+
+            };
+
         };
 
      });
