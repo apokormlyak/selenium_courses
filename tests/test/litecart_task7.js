@@ -4,10 +4,20 @@ const chrome = require('selenium-webdriver/chrome')
 
 // async function isElementPresent(el){
 //     try{
-//         await 
-//     } catch{}
-      
+//         return el;
+//     }catch(NoSuchElementError) {
+//         console.log("There is no h1 tag");
+//     };
 // }
+
+async function isElementPresent(el){
+    if(el){
+        console.log("There is h1 tag");
+        return true;
+    }else {
+        console.log("There is no h1 tag");
+    };
+}
 
 describe('test7', function(){
 
@@ -25,40 +35,40 @@ describe('test7', function(){
 
     it('test7', async function(){
         await driver.get('http://localhost/litecart/admin/');
-        await driver.findElement(By.name('username')).sendKeys('admin', Key.RETURN);
-        await driver.findElement(By.name('password')).sendKeys('admin', Key.RETURN);
-        await driver.findElement(By.css("div.footer button[type='submit']")).click();
-        
-        await driver.wait(() => {
-            until.elementLocated(By.css("div#box-apps-menu-wrapper"));
-            console.log(5, By.css("div#box-apps-menu-wrapper"));
-        }, 50000);
+        await driver.findElement(By.name('username')).sendKeys("admin");
+        await driver.findElement(By.name('password')).sendKeys("admin", Key.ENTER);
+        await driver.wait(until.elementLocated({'css':'ul#box-apps-menu'}), 20000);
 
-        //await driver.manage().timeouts().pageLoadTimeout(20000, timeUnit.Seconds);
-        
-        let rows = driver.findElements(By.css("ul#box-apps-menu li#app-"));
+        let rows = await driver.findElements(By.css("ul#box-apps-menu li#app-"));
+        const listSize = rows.length;
 
-        for (row in rows){
-            console.log(row);
-            let element = row.findElement(By.id('#app-'));
-            element.click();
+        for (let i = 0; i < listSize; i++){
 
-            //cdriver.manage().timeouts().implicityWait(20000);
-                let elmsChld = element.findElements(By.css('ul.docs'));
+            rows = await driver.findElements(By.css("ul#box-apps-menu li#app-"));
 
-            if(elmsChld.length>0){
-                for (elmChld in elmsChld){
-                    elmChld.findElements(By.css('ul.docs')).click();
-                    const el = elmChld.findElement(By.css('h1'));
-                    isElementPresent(el);
-                };
+            let el = await driver.findElements(By.css('h1'));
+            isElementPresent(el);
+            //isElementPresent(await driver.findElements(By.css('h1')));
+             await rows[i].click();
 
-            };
+             driver.manage().setTimeouts({'pageLoad' : 10000});
+                let elmsChld =  await driver.findElements(By.css('ul.docs li'));
+                const listSize2 = elmsChld.length;
 
-        };
+                if (listSize2 > 0) {
+                    for (let i = 0; i < listSize2; i++){
+                        let el = await driver.findElements(By.css('h1'));
+                        isElementPresent(el);
+                        //isElementPresent(await driver.findElement(By.css('h1')));
 
-     });
+                        elmsChld = await driver.findElements(By.css('ul.docs li'));
+                        await elmsChld[i].click();
+                    }
+                }else continue;
 
+        }
+    });
+            
     after( ()=> driver && driver.quit());
 
 });
